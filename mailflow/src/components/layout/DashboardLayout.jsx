@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
 import { MobileNav } from './MobileNav';
@@ -15,6 +15,7 @@ import { GlobalSearch } from '../modules/search/GlobalSearch';
 export const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const location = useLocation();
 
   // Handle window resize
   useEffect(() => {
@@ -32,8 +33,11 @@ export const DashboardLayout = () => {
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
-    setIsSidebarOpen(false);
-  }, [window.location.pathname]);
+    if (isMobile) {
+      // eslint-disable-next-line
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   return (
     <SearchProvider>

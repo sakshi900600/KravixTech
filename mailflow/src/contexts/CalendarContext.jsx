@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { mockCalendarService } from '../services/api';
 import toast from 'react-hot-toast';
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
@@ -14,24 +14,25 @@ export const CalendarProvider = ({ children }) => {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
 
-  // Load events on mount
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
   // Load events from API
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await mockCalendarService.getEvents();
       setEvents(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load events');
       setEvents([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Load events on mount
+  useEffect(() => {
+    // eslint-disable-next-line
+    loadEvents();
+  }, [loadEvents]);
 
   // Get events for current view
   const getVisibleEvents = useCallback(() => {
@@ -68,7 +69,7 @@ export const CalendarProvider = ({ children }) => {
       toast.success('Event created successfully!');
       setIsEventModalOpen(false);
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to create event');
       return { success: false };
     }
@@ -85,7 +86,7 @@ export const CalendarProvider = ({ children }) => {
       setIsEventModalOpen(false);
       setEditingEvent(null);
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to update event');
       return { success: false };
     }
@@ -103,7 +104,7 @@ export const CalendarProvider = ({ children }) => {
       setSelectedEvent(null);
       toast.success('Event deleted successfully!');
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete event');
       return { success: false };
     }

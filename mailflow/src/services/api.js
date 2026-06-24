@@ -155,11 +155,11 @@ export const mockEmailService = {
     await delay(700);
     return generateMockEmails().slice(0, 3).map(e => ({ ...e, isRead: true }));
   },
-  sendEmail: async (emailData) => {
+  sendEmail: async () => {
     await delay(1000);
     return { success: true, id: Date.now() };
   },
-  saveDraft: async (emailData) => {
+  saveDraft: async () => {
     await delay(500);
     return { success: true, id: Date.now() };
   },
@@ -240,7 +240,7 @@ export const mockCalendarService = {
       updatedAt: new Date().toISOString(),
     };
   },
-  deleteEvent: async (eventId) => {
+  deleteEvent: async () => {
     await delay(500);
     return { success: true };
   },
@@ -307,7 +307,7 @@ export const mockContactService = {
       updatedAt: new Date().toISOString(),
     };
   },
-  deleteContact: async (contactId) => {
+  deleteContact: async () => {
     await delay(500);
     return { success: true };
   },
@@ -386,7 +386,7 @@ export const mockTaskService = {
       updatedAt: new Date().toISOString(),
     };
   },
-  deleteTask: async (taskId) => {
+  deleteTask: async () => {
     await delay(500);
     return { success: true };
   },
@@ -412,7 +412,6 @@ export const mockSearchService = {
     }
 
     const searchQuery = query.toLowerCase();
-    const results = [];
 
     // Search in emails (from your email context)
     const emails = await mockEmailService.getInbox();

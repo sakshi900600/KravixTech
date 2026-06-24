@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 // Create context
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
             setToken(null);
             setUser(null);
           }
-        } catch (err) {
+        } catch {
           setToken(null);
           setUser(null);
         }
@@ -79,11 +79,11 @@ export const AuthProvider = ({ children }) => {
         error: 'Invalid email or password. Please try again.' 
       };
       
-    } catch (err) {
+    } catch (_err) {
       setIsLoading(false);
       return { 
         success: false, 
-        error: err.message || 'Login failed. Please try again.' 
+        error: _err.message || 'Login failed. Please try again.' 
       };
     }
   };
@@ -98,8 +98,8 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setToken(null);
       localStorage.removeItem('auth_token');
-    } catch (err) {
-      console.error('Logout error:', err);
+    } catch (_err) {
+      console.error('Logout error:', _err);
     } finally {
       setIsLoading(false);
     }

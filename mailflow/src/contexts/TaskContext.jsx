@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { mockTaskService } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -14,24 +14,25 @@ export const TaskProvider = ({ children }) => {
   const [editingTask, setEditingTask] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
 
-  // Load tasks on mount
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
   // Load tasks from API
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await mockTaskService.getTasks();
       setTasks(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load tasks');
       setTasks([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Load tasks on mount
+  // eslint-disable-next-line
+  useEffect(() => {
+    loadTasks();
+  }, [loadTasks]);
 
   // Get filtered and sorted tasks
   const getFilteredTasks = useCallback(() => {
@@ -87,7 +88,7 @@ export const TaskProvider = ({ children }) => {
       toast.success('Task created successfully!');
       setIsModalOpen(false);
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to create task');
       return { success: false };
     }
@@ -105,7 +106,7 @@ export const TaskProvider = ({ children }) => {
       setEditingTask(null);
       setSelectedTask(null);
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to update task');
       return { success: false };
     }
@@ -123,7 +124,7 @@ export const TaskProvider = ({ children }) => {
       setSelectedTask(null);
       toast.success('Task deleted successfully!');
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete task');
       return { success: false };
     }
@@ -143,7 +144,7 @@ export const TaskProvider = ({ children }) => {
           : t
       ));
       toast.success(newCompleted ? 'Task completed! 🎉' : 'Task reopened');
-    } catch (error) {
+    } catch {
       toast.error('Failed to update task status');
     }
   };

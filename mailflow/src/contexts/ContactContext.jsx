@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { mockContactService } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -15,24 +15,25 @@ export const ContactProvider = ({ children }) => {
   const [editingContact, setEditingContact] = useState(null);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
 
-  // Load contacts on mount
-  useEffect(() => {
-    loadContacts();
-  }, []);
-
   // Load contacts from API
-  const loadContacts = async () => {
+  const loadContacts = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await mockContactService.getContacts();
       setContacts(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load contacts');
       setContacts([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Load contacts on mount
+  // eslint-disable-next-line
+  useEffect(() => {
+    loadContacts();
+  }, [loadContacts]);
 
   // Get filtered and sorted contacts
   const getFilteredContacts = useCallback(() => {
@@ -79,7 +80,7 @@ export const ContactProvider = ({ children }) => {
       toast.success('Contact added successfully!');
       setIsModalOpen(false);
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to add contact');
       return { success: false };
     }
@@ -97,7 +98,7 @@ export const ContactProvider = ({ children }) => {
       setEditingContact(null);
       setSelectedContact(null);
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to update contact');
       return { success: false };
     }
@@ -115,7 +116,7 @@ export const ContactProvider = ({ children }) => {
       setSelectedContact(null);
       toast.success('Contact deleted successfully!');
       return { success: true };
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete contact');
       return { success: false };
     }

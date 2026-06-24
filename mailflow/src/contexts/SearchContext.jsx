@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { mockSearchService } from '../services/api';
 import { useDebounce } from '../hooks/useDebounce';
 import toast from 'react-hot-toast';
@@ -16,31 +16,16 @@ export const SearchProvider = ({ children }) => {
 
   const debouncedQuery = useDebounce(query, 300);
 
-  // Load recent searches on mount
-  useEffect(() => {
-    loadRecentSearches();
-  }, []);
-
-  // Perform search when query changes
-  useEffect(() => {
-    if (debouncedQuery.trim()) {
-      performSearch(debouncedQuery);
-    } else {
-      setResults([]);
-      setSelectedIndex(-1);
-    }
-  }, [debouncedQuery, filter]);
-
-  const loadRecentSearches = async () => {
+  const loadRecentSearches = useCallback(async () => {
     try {
       const recent = await mockSearchService.getRecentSearches();
       setRecentSearches(recent);
-    } catch (error) {
-      console.error('Failed to load recent searches:', error);
+    } catch {
+      console.error('Failed to load recent searches:');
     }
-  };
+  }, []);
 
-  const performSearch = async (searchQuery) => {
+  const performSearch = useCallback(async (searchQuery) => {
     setIsLoading(true);
     try {
       const data = await mockSearchService.search(searchQuery, filter);
@@ -51,13 +36,30 @@ export const SearchProvider = ({ children }) => {
         await mockSearchService.saveRecentSearch(searchQuery);
         await loadRecentSearches();
       }
-    } catch (error) {
+    } catch {
       toast.error('Search failed. Please try again.');
       setResults([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [filter]);
+
+  // Load recent searches on mount
+  // eslint-disable-next-line
+  useEffect(() => {
+    loadRecentSearches();
+  }, [loadRecentSearches]);
+
+  // Perform search when query changes
+  // eslint-disable-next-line
+  useEffect(() => {
+    if (debouncedQuery.trim()) {
+      performSearch(debouncedQuery);
+    } else {
+      setResults([]);
+      setSelectedIndex(-1);
+    }
+  }, [debouncedQuery, filter, performSearch]);
 
   const openSearch = () => {
     setIsOpen(true);

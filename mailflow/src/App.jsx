@@ -2,11 +2,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { ROUTES } from './utils/constants';
+// pages
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { InboxPage } from './pages/InboxPage';
-import { ROUTES } from './utils/constants';
 import { CalendarPage } from './pages/CalendarPage';
 import { ContactsPage } from './pages/ContactsPage';
 import { TasksPage } from './pages/TasksPage';

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { mockEmailService } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -13,24 +13,25 @@ export const EmailProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isComposeOpen, setIsComposeOpen] = useState(false);
 
-  // Load emails on mount
-  useEffect(() => {
-    loadEmails();
-  }, []);
-
   // Load emails from API
-  const loadEmails = async () => {
+  const loadEmails = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await mockEmailService.getInbox();
       setEmails(data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load emails');
       setEmails([]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Load emails on mount
+  // eslint-disable-next-line
+  useEffect(() => {
+    loadEmails();
+  }, [loadEmails]);
 
   // Get filtered emails
   const getFilteredEmails = useCallback(() => {
@@ -165,7 +166,7 @@ export const EmailProvider = ({ children }) => {
   };
 
   // Compose actions
-  const sendEmail = async (emailData) => {
+  const sendEmail = async () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast.success('Email sent successfully!');
@@ -177,7 +178,7 @@ export const EmailProvider = ({ children }) => {
     }
   };
 
-  const saveDraft = async (emailData) => {
+  const saveDraft = async () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       toast.success('Draft saved!');
