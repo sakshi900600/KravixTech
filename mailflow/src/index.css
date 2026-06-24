@@ -5,11 +5,12 @@
 /* Custom base styles */
 @layer base {
   * {
-    @apply border-gray-200 dark:border-gray-700;
+    @apply border-gray-300 dark:border-gray-700;
   }
   
   body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased;
+    /* Slightly darker light-theme background for better contrast */
+    @apply bg-gray-300 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
   
